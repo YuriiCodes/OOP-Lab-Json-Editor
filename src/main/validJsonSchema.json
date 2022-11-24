@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Linear Algrebra",
+    "department": "Mathematics",
+    "branch": "Mathematical Analysis",
+    "chair": "Professor, Doctor of Technical Sciences, Professor of the Department of Computer Science and Engineering",
+    "day": "Wednesday",
+    "time": "18:00",
+    "headman": "Alexander the great",
+    "course": "Linear algebra basics",
+    "subject": "Computer Science",
+    "leader": "Kozlovsky Alexander"
+  },
+  {
+    "name": "Calculus",
+    "department": "Computer Science",
+    "branch": "Software engineering",
+    "chair": "Professor, Doctor of Multivariate Analysis and complex functions",
+    "day": "Monday",
+    "time": "12:40",
+    "headman": "John Doe",
+    "course": "Calculus 1",
+    "subject": "Computer Science",
+    "leader": "Steve Green"
+  }
+]

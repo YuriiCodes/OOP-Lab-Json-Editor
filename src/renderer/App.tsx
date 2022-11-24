@@ -12,7 +12,7 @@ const StartPage = () => {
       <p className="display-6 text-white">Greetings! This app will help you edit JSON files✅</p>
       <p className="text-white">To start, just click the button below:</p>
       <button type="button" className="btn btn-primary">
-        <Link to="/loadFile" className="text-white text-decoration-none">Load XML</Link>
+        <Link to="/loadFile" className="text-white text-decoration-none">Load JSON</Link>
       </button>
       <h3 className={"text-white mt-4"}>Example of valid JSON input</h3>
         <pre className={"text-white"}>

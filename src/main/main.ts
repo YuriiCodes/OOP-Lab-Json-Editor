@@ -14,8 +14,6 @@ import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import {resolveHtmlPath} from './util';
-import {XmlParserClass} from "./xmlParserClass";
-import util, {inspect} from "util";
 import ejs from 'ejs';
 
 
@@ -57,32 +55,14 @@ ipcMain.on('show-success-dialog', (event, arg) => {
 });
 
 
-ipcMain.on('xml-uploaded', async (event, arg) => {
-  const msgTemplate = (file: string) => `xml file uploaded: ${file}`;
-  let data;
+ipcMain.on('json-uploaded', async (event, arg) => {
+  let jsonData;
   try {
-    data = await fs.readFile(arg[0], {encoding: 'utf8'});
+    jsonData = await fs.readFile(arg[0], {encoding: 'utf8'});
   } catch (err) {
     dialog.showErrorBox("Error", "Error reading file");
   }
-  let parser: XmlParserClass = XmlParserClass.getInstance();
-
-  // Uncode the code below to perform singleton test.
-  // It will output "Singleton works, both variables contain the same instance".
-
-  /*let parser2:XmlParserClass = XmlParserClass.getInstance();
-  if (parser === parser2) {
-    console.log('Singleton works, both variables contain the same instance.');
-  } else {
-    console.log('Singleton failed, variables contain different instances.');
-  }*/
-  let jsonObj = {};
-  try {
-    jsonObj = parser.parse(data);
-  } catch (err) {
-    dialog.showErrorBox("Error", "Error parsing file");
-  }
-  event.sender.send("json-ready", jsonObj);
+  event.sender.send("json-ready", JSON.parse(jsonData));
 });
 
 async function writeToFile(path: string, data: any) {
