@@ -2,7 +2,7 @@ import {MemoryRouter as Router, Routes, Route, Link} from 'react-router-dom';
 
 import './App.css';
 import './App.global.css';
-import {LoadFile} from "./components/LoadFile";
+import {LoadFile} from "./components/LoadFile/LoadFile";
 import React, {useState} from "react";
 
 const StartPage = () => {

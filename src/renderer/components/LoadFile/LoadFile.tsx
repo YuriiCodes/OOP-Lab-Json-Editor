@@ -1,18 +1,8 @@
 import React, { Component } from 'react';
+import { GroupInfo } from '../types';
+import { EditableTable } from '../EditableTable/EditableTable';
 
 
-type GroupInfo = {
-  name: string,
-  department: string,
-  branch: string,
-  chair: string,
-  day: string,
-  time: string,
-  headman: string,
-  course: string,
-  subject: string,
-  leader: string,
-}
 
 interface Props {
   json: GroupInfo[];
@@ -24,7 +14,7 @@ interface State {
 }
 
 export class LoadFile extends Component<Props, State> {
-  private readonly fileInputRef: React.RefObject<unknown>;
+  private readonly fileInputRef: React.LegacyRef<HTMLInputElement>;
 
   openSaveDialog = (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     window.electron.ipcRenderer.sendMessage('export-to-html', [this.state.jsonToExport]);
@@ -34,7 +24,9 @@ export class LoadFile extends Component<Props, State> {
     super(props);
     this.fileInputRef = React.createRef();
 
+
     this.state = {
+      // @ts-ignore
       jsonToExport: {},
     };
   }
@@ -88,40 +80,7 @@ export class LoadFile extends Component<Props, State> {
           {this.props.isJsonLoaded ? <div className='tableView mt-5 p-3 bg-dark rounded'>
             <h2 className='text-white'>File preview</h2>
             <div className={'d-flex justify-content-between'}>
-              <table className='table text-white table-dark'>
-                <thead>
-                <tr>
-                  <th scope='col'>Name</th>
-                  <th scope='col'>Department</th>
-                  <th scope='col'>Branch</th>
-                  <th scope='col'>Chair</th>
-                  <th scope='col'>Day</th>
-                  <th scope='col'>Time</th>
-                  <th scope='col'>Headman</th>
-                  <th scope='col'>Course</th>
-                  <th scope='col'>subject</th>
-                  <th scope='col'>leader</th>
-                </tr>
-                </thead>
-                <tbody>
-                {this.state.jsonToExport.map((group, index) => (
-                  <tr className={'text-white'} key={index}>
-                    <td> {group.name} </td>
-                    <td> {group.department}</td>
-                    <td> {group.branch} </td>
-                    <td>{group.chair} </td>
-                    <td> {group.day}</td>
-                    <td> {group.time}</td>
-                    <td> {group.headman}</td>
-                    <td> {group.course} </td>
-                    <td> {group.subject}</td>
-                    <td> {group.leader}</td>
-                  </tr>
-                ))}
-
-                </tbody>
-              </table>
-
+              <EditableTable jsonToExport={this.props.json} />
             </div>
           </div>: null}
         </div>
