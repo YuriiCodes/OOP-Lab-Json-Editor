@@ -20,25 +20,14 @@ interface Props {
 }
 
 interface State {
-  nameSearch: string,
-  departmentSearch: string,
-  branchSearch: string,
-  chairSearch: string,
-  daySearch: string,
-  timeSearch: string,
-  headmanSearch: string,
-  courseSearch: string,
-  subjectSearch: string,
-  leaderSearch: string,
-  jsonSearchRes: any,
-  isJsonToExportValid: boolean,
+  jsonToExport: GroupInfo[],
 }
 
 export class LoadFile extends Component<Props, State> {
   private readonly fileInputRef: React.RefObject<unknown>;
 
   openSaveDialog = (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    window.electron.ipcRenderer.sendMessage('export-to-html', [this.state.jsonSearchRes]);
+    window.electron.ipcRenderer.sendMessage('export-to-html', [this.state.jsonToExport]);
   };
 
   constructor(props: any) {
@@ -46,24 +35,24 @@ export class LoadFile extends Component<Props, State> {
     this.fileInputRef = React.createRef();
 
     this.state = {
-      nameSearch: '',
-      departmentSearch: '',
-      branchSearch: '',
-      chairSearch: '',
-      daySearch: '',
-      timeSearch: '',
-      headmanSearch: '',
-      courseSearch: '',
-      subjectSearch: '',
-      leaderSearch: '',
-      jsonSearchRes: {},
-      isJsonToExportValid: true
+      jsonToExport: {},
     };
-
   }
 
+  // When component receives json & isJsonLoaded in props, we set it to the local state
+  // to be able to use it in the export function & allow the user to export it
+  static getDerivedStateFromProps(props: Props, _state: State) {
+    if (props.isJsonLoaded) {
+      return {
+        jsonToExport: props.json,
+      };
+    }
+    return null;
+  }
+
+
   render() {
-    console.log(this.props);
+    console.log(this.state);
     // @ts-ignore
     return (
       <div className='container mt-5'>
@@ -96,10 +85,10 @@ export class LoadFile extends Component<Props, State> {
           </form>
 
 
-          <div className='tableView mt-5 p-3 bg-dark rounded'>
+          {this.props.isJsonLoaded ? <div className='tableView mt-5 p-3 bg-dark rounded'>
             <h2 className='text-white'>File preview</h2>
             <div className={'d-flex justify-content-between'}>
-              {this.props.isJsonLoaded ? <table className='table text-white table-dark'>
+              <table className='table text-white table-dark'>
                 <thead>
                 <tr>
                   <th scope='col'>Name</th>
@@ -115,7 +104,7 @@ export class LoadFile extends Component<Props, State> {
                 </tr>
                 </thead>
                 <tbody>
-                {this.props.json.map((group, index) => (
+                {this.state.jsonToExport.map((group, index) => (
                   <tr className={'text-white'} key={index}>
                     <td> {group.name} </td>
                     <td> {group.department}</td>
@@ -131,10 +120,10 @@ export class LoadFile extends Component<Props, State> {
                 ))}
 
                 </tbody>
-              </table> : null}
+              </table>
 
             </div>
-          </div>
+          </div>: null}
         </div>
       </div>
     );
