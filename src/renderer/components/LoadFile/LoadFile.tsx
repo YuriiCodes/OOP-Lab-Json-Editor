@@ -68,7 +68,7 @@ export class LoadFile extends Component<Props, State> {
             );
           }}>
             <div className='mb-3'>
-              <label htmlFor='formFile' className='form-label text-white'>Please, select the XML file:</label>
+              <label htmlFor='formFile' className='form-label text-white'>Please, select the JSON file:</label>
               {/*// @ts-ignore*/}
               <input className='form-control' type='file' accept='application/json' id='formFile'
                      ref={this.fileInputRef} />
