@@ -14,7 +14,6 @@ import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import {resolveHtmlPath} from './util';
-import ejs from 'ejs';
 
 
 const fs = require('fs/promises');
@@ -65,6 +64,17 @@ ipcMain.on('json-uploaded', async (event, arg) => {
   event.sender.send("json-ready", JSON.parse(jsonData));
 });
 
+
+ipcMain.on('general-json-uploaded', async (event, arg) => {
+  let jsonData;
+  try {
+    jsonData = await fs.readFile(arg[0], {encoding: 'utf8'});
+  } catch (err) {
+    dialog.showErrorBox("Error", "Error reading file");
+  }
+  event.sender.send("general-json-ready", JSON.parse(jsonData));
+});
+
 async function writeToFile(path: string, data: any) {
   try {
     await fs.writeFile(path, data);
@@ -99,7 +109,7 @@ ipcMain.on('export-json', async (event, arg) => {
     }
     let filePath = result.filePaths[0];
     writeToFile(filePath, arg[0]);
-  }).catch(err => {
+  }).catch(_err => {
     dialog.showErrorBox("Error", "Error opening file");
   })
 });
