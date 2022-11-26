@@ -4,6 +4,8 @@ import './App.css';
 import './App.global.css';
 import {LoadFile} from "./components/LoadFile/LoadFile";
 import React, {useState} from "react";
+import { Navbar } from './components/Navbar/Navbar';
+import { JsonEditor } from './components/JSONEditor/JsonEditor';
 
 const StartPage = () => {
   return (
@@ -54,10 +56,13 @@ export default function App() {
 
   return (
     <Router>
+      <Navbar/>
       <Routes>
         <Route path="/" element={<StartPage/>}/>
         {/*// @ts-ignore*/}
         <Route path="/loadFile" element={<LoadFile isJsonLoaded={isJsonLoaded} json={json}/>}/>
+
+        <Route path="/jsonEditor" element={<JsonEditor />}/>
       </Routes>
     </Router>
   );

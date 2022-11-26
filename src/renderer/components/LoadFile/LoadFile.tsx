@@ -73,13 +73,13 @@ export class LoadFile extends Component<Props, State> {
               <input className='form-control' type='file' accept='application/json' id='formFile'
                      ref={this.fileInputRef} />
             </div>
-            <button type='submit' className='btn btn-primary'>Submit</button>
+            <button type='submit' className='btn btn-secondary'>Submit</button>
           </form>
 
 
           {this.props.isJsonLoaded ? <div className='tableView mt-5 p-3 bg-dark rounded'>
             <h2 className='text-white'>File preview</h2>
-            <div className={'d-flex justify-content-between'}>
+            <div>
               <EditableTable jsonToExport={this.props.json} />
             </div>
           </div>: null}

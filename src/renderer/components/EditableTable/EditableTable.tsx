@@ -1,6 +1,7 @@
 import { TableInput } from './TableInput/TableInput';
 import React from 'react';
 import { GroupInfo } from '../types';
+import ipcRenderer = Electron.ipcRenderer;
 
 type EditableTableProps = {
   jsonToExport: GroupInfo[];
@@ -162,6 +163,15 @@ export const EditableTable = (props: EditableTableProps) => {
         </>
         </tbody>
       </table>
+
+      <div className={"mt-5"}>
+        <button className={'btn btn-primary'} onClick={(e) => {
+            e.preventDefault();
+            console.log(jsonToExport);
+            const json = JSON.stringify(jsonToExport);
+            window.electron.ipcRenderer.sendMessage('export-json', [json]);
+        }}>Export JSON</button>
+      </div>
     </div>
   );
 };

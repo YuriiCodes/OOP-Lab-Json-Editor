@@ -84,75 +84,21 @@ async function writeToFile(path: string, data: any) {
   }
 }
 
-let ejsStr = `<!DOCTYPE html>
-                        <html>
-                          <head>
-                            <meta charset="utf-8">
-                            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                            <meta name="viewport" content="width=device-width, initial-scale=1">
-                            <title>Exported HTML</title>
-                            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/fontawesome.min.css">
-                            <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-                            <!-- Leave those next 4 lines if you care about users using IE8 -->
-                            <!--[if lt IE 9]>
-                              <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-                              <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-                            <![endif]-->
-                          </head>
-                          <body>
-                          <div class="container">
-                            <table class="table">
-                                  <thead>
-                                    <tr>
-                                      <th scope="col">Name</th>
-                                      <th scope="col">Department</th>
-                                      <th scope="col">Branch</th>
-                                      <th scope="col">Chair</th>
-                                      <th scope="col">Day</th>
-                                      <th scope="col">Time</th>
-                                      <th scope="col">Headman</th>
-                                      <th scope="col">Course</th>
-                                      <th scope="col">subject</th>
-                                      <th scope="col">leader</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <% groups.forEach(group => {%>
-                                      <tr>
-                                        <td><%= group.name %></td>
-                                        <td><%= group.department %></td>
-                                        <td><%= group.branch %></td>
-                                        <td><%= group.chair %></td>
-                                        <td><%= group.day %></td>
-                                        <td><%= group.time %></td>
-                                        <td><%= group.headman %></td>
-                                        <td><%= group.course %></td>
-                                        <td><%= group.subject %></td>
-                                        <td><%= group.leader %></td>
-                                      </tr>
-                                    <% }); %>
-                                  </tbody>
-                                </table>
-                                </div>
-                            <!-- Including Bootstrap JS (with its jQuery dependency) so that dynamic components work -->
-                            <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-                            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-                          </body>
-                        </html>`
-ipcMain.on('export-to-html', async (event, arg) => {
+ipcMain.on('export-json', async (event, arg) => {
   if (mainWindow === null) {
     throw new Error('"mainWindow" is not defined');
   }
   dialog.showOpenDialog(mainWindow, {
-    properties: ['openFile']
+    properties: ['openFile'],
+    filters: [
+      {name: 'JSON', extensions: ['json']}
+    ]
   }).then(result => {
     if (result.canceled) {
       return;
     }
     let filePath = result.filePaths[0];
-    let rendered = ejs.render(ejsStr, {groups: arg[0]}, {});
-    writeToFile(filePath, rendered);
+    writeToFile(filePath, arg[0]);
   }).catch(err => {
     dialog.showErrorBox("Error", "Error opening file");
   })
