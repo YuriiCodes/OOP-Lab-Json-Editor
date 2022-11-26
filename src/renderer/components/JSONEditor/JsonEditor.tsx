@@ -3,12 +3,20 @@ import locale from 'react-json-editor-ajrm/locale/en';
 import React, { useRef, useState } from 'react';
 
 
+
 export const JsonEditor = () => {
-
-
   const JsonFileInputRef = useRef(null);
   const [json, setJson] = useState({});
 
+  const exportJsonClick =  (e: any) => {
+    //   export json from state to the JSON file:
+    e.preventDefault();
+    if(json === undefined) {
+      window.electron.ipcRenderer.sendMessage('show-error-dialog', ['Please fix JSON errors']);
+      return;
+    }
+    window.electron.ipcRenderer.sendMessage('export-json', [JSON.stringify(json)]);
+  }
   window.electron.ipcRenderer.on("general-json-ready", (args) => {
     console.log("received json");
     // @ts-ignore
@@ -62,15 +70,7 @@ export const JsonEditor = () => {
           </form>
           <hr/>
 
-          <button className='btn btn-primary' onClick={(e) => {
-          //   export json from state to the JSON file:
-            e.preventDefault();
-            if(json === undefined) {
-              window.electron.ipcRenderer.sendMessage('show-error-dialog', ['Please fix JSON errors']);
-              return;
-            }
-            window.electron.ipcRenderer.sendMessage('export-json', [JSON.stringify(json)]);
-          }}>Save JSON file</button>
+          <button className='btn btn-primary' onClick={(e) => exportJsonClick(e)}>Save JSON file</button>
         </div>
       </div>
     </div>

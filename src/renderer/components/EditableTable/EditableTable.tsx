@@ -27,7 +27,54 @@ export const EditableTable = (props: EditableTableProps) => {
   const [newSubject, setNewSubject] = React.useState('');
   const [newLeader, setNewLeader] = React.useState('');
 
+  const handleExportJson = (e: any) => {
+    e.preventDefault();
+    console.log(jsonToExport);
+    const json = JSON.stringify(jsonToExport);
+    window.electron.ipcRenderer.sendMessage('export-json', [json]);
+  }
+  const handleAddNewRow = (e: any) => {
+    e.preventDefault();
+    // check if values are empty
+    if (newName === '' || newDepartment === '' || newBranch === '' || newChair === '' || newDay === '' || newTime === '' || newHeadman === '' || newCourse === '' || newSubject === '' || newLeader === '') {
+      alert('Please fill all fields');
+      return;
+    }
 
+    // validate day value case insensitive:
+    if (newDay.toLowerCase() !== 'monday' && newDay.toLowerCase() !== 'tuesday' && newDay.toLowerCase() !== 'wednesday' && newDay.toLowerCase() !== 'thursday' && newDay.toLowerCase() !== 'friday' && newDay.toLowerCase() !== 'saturday' && newDay.toLowerCase() !== 'sunday') {
+      alert('Please enter a valid day');
+      return;
+    }
+
+    // validate time value, must be in format hh:mm
+    if (!validateTime(newTime)) {
+      alert('Please enter a valid time');
+      return;
+    }
+    setJsonToExport([...jsonToExport, {
+      name: newName,
+      department: newDepartment,
+      branch: newBranch,
+      chair: newChair,
+      day: newDay,
+      time: newTime,
+      headman: newHeadman,
+      course: newCourse,
+      subject: newSubject,
+      leader: newLeader
+    }]);
+    setNewName('');
+    setNewDepartment('');
+    setNewBranch('');
+    setNewChair('');
+    setNewDay('');
+    setNewTime('');
+    setNewHeadman('');
+    setNewCourse('');
+    setNewSubject('');
+    setNewLeader('');
+  }
   return (
     <div>
       <table className='table text-white table-dark'>
@@ -113,49 +160,7 @@ export const EditableTable = (props: EditableTableProps) => {
               <input className={'w-100 h-auto'} type='text' value={newLeader} placeholder={'Leader'} onChange={(e) => {
                 setNewLeader(e.target.value);
               }} />
-              <button className={'btn btn-success'} onClick={(e) => {
-                e.preventDefault();
-                // check if values are empty
-                if (newName === '' || newDepartment === '' || newBranch === '' || newChair === '' || newDay === '' || newTime === '' || newHeadman === '' || newCourse === '' || newSubject === '' || newLeader === '') {
-                  alert('Please fill all fields');
-                  return;
-                }
-
-                // validate day value case insensitive:
-                if (newDay.toLowerCase() !== 'monday' && newDay.toLowerCase() !== 'tuesday' && newDay.toLowerCase() !== 'wednesday' && newDay.toLowerCase() !== 'thursday' && newDay.toLowerCase() !== 'friday' && newDay.toLowerCase() !== 'saturday' && newDay.toLowerCase() !== 'sunday') {
-                  alert('Please enter a valid day');
-                  return;
-                }
-
-                // validate time value, must be in format hh:mm
-                if (!validateTime(newTime)) {
-                  alert('Please enter a valid time');
-                  return;
-                }
-                setJsonToExport([...jsonToExport, {
-                  name: newName,
-                  department: newDepartment,
-                  branch: newBranch,
-                  chair: newChair,
-                  day: newDay,
-                  time: newTime,
-                  headman: newHeadman,
-                  course: newCourse,
-                  subject: newSubject,
-                  leader: newLeader
-                }]);
-                setNewName('');
-                setNewDepartment('');
-                setNewBranch('');
-                setNewChair('');
-                setNewDay('');
-                setNewTime('');
-                setNewHeadman('');
-                setNewCourse('');
-                setNewSubject('');
-                setNewLeader('');
-
-              }}>Add
+              <button className={'btn btn-success'} onClick={e => handleAddNewRow(e)}>Add
               </button>
             </td>
 
@@ -165,12 +170,7 @@ export const EditableTable = (props: EditableTableProps) => {
       </table>
 
       <div className={"mt-5"}>
-        <button className={'btn btn-primary'} onClick={(e) => {
-            e.preventDefault();
-            console.log(jsonToExport);
-            const json = JSON.stringify(jsonToExport);
-            window.electron.ipcRenderer.sendMessage('export-json', [json]);
-        }}>Export JSON</button>
+        <button className={'btn btn-primary'} onClick={e => handleExportJson(e)}>Export JSON</button>
       </div>
     </div>
   );
