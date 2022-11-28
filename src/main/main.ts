@@ -14,6 +14,9 @@ import {autoUpdater} from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import {resolveHtmlPath} from './util';
+import { validConcreteJsonSchema } from './JsonValidation/schemas';
+import Ajv from 'ajv';
+const ajv = new Ajv()
 
 
 const fs = require('fs/promises');
@@ -60,6 +63,13 @@ ipcMain.on('json-uploaded', async (event, arg) => {
     jsonData = await fs.readFile(arg[0], {encoding: 'utf8'});
   } catch (err) {
     dialog.showErrorBox("Error", "Error reading file");
+  }
+
+  const validate = ajv.compile(validConcreteJsonSchema)
+  const valid = validate(jsonData)
+  if (!valid) {
+    dialog.showErrorBox("Error", "Invalid JSON schema");
+    return;
   }
   event.sender.send("json-ready", JSON.parse(jsonData));
 });
