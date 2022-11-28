@@ -16,6 +16,7 @@ import MenuBuilder from './menu';
 import {resolveHtmlPath} from './util';
 import { validConcreteJsonSchema } from './JsonValidation/schemas';
 import Ajv from 'ajv';
+import { json } from 'stream/consumers';
 const ajv = new Ajv()
 
 
@@ -65,13 +66,14 @@ ipcMain.on('json-uploaded', async (event, arg) => {
     dialog.showErrorBox("Error", "Error reading file");
   }
 
+  jsonData = JSON.parse(jsonData);
   const validate = ajv.compile(validConcreteJsonSchema)
   const valid = validate(jsonData)
   if (!valid) {
     dialog.showErrorBox("Error", "Invalid JSON schema");
     return;
   }
-  event.sender.send("json-ready", JSON.parse(jsonData));
+  event.sender.send("json-ready", jsonData);
 });
 
 
