@@ -8,18 +8,27 @@ type TableInputProps = {
   setJsonToExport: React.Dispatch<SetStateAction<GroupInfo[]>>,
   jsonToExport: GroupInfo[],
   fieldName: string,
+  validators? : {
+    [key: string]: (value: string) => boolean
+  }
 }
 
 export const TableInput = (props: TableInputProps) => {
   const [isEditable, setIsEditable] = React.useState(true);
-  const toggleEditable = () => {
+
+  const handleInputDoubleClick = () => {
+    if (props.validators && props.validators[props.fieldName] && !props.validators[props.fieldName](props.text)) {
+      // When the value is invalid we show the user error message & don't toggle the editable state
+        alert('Please enter a valid value');
+        return;
+    }
     setIsEditable(!isEditable);
-  };
+  }
   return (
     <>
       {isEditable ? (
-        <td onDoubleClick={toggleEditable}> {props.text} </td>) : (
-        <td onDoubleClick={toggleEditable}>
+        <td onDoubleClick={handleInputDoubleClick}> {props.text} </td>) : (
+        <td onDoubleClick={handleInputDoubleClick}>
           <input type='text' value={props.text} onChange={(e) => {
             const newJsonToExport = [...props.jsonToExport];
 

@@ -1,17 +1,13 @@
 import { TableInput } from './TableInput/TableInput';
 import React from 'react';
 import { GroupInfo } from '../types';
-import ipcRenderer = Electron.ipcRenderer;
+import { validateDay, validateTime } from './validators';
 
 type EditableTableProps = {
   jsonToExport: GroupInfo[];
 }
 
-// function to validate time. Must be in format HH:MM
-const validateTime = (time: string) => {
-  const timeRegex = new RegExp('^([01]?[0-9]|2[0-3]):[0-5][0-9]$');
-  return timeRegex.test(time);
-}
+
 export const EditableTable = (props: EditableTableProps) => {
   const [jsonToExport, setJsonToExport] = React.useState(props.jsonToExport);
 
@@ -36,11 +32,10 @@ export const EditableTable = (props: EditableTableProps) => {
   const handleAddNewRow = (e: any) => {
     e.preventDefault();
     // check if values are empty
-    if (newName === '' || newDepartment === '' || newBranch === '' || newChair === '' || newDay === '' || newTime === '' || newHeadman === '' || newCourse === '' || newSubject === '' || newLeader === '') {
-      alert('Please fill all fields');
+    if (!validateDay(newDay)) {
+      alert('Please enter the correct day.');
       return;
     }
-
     // validate day value case insensitive:
     if (newDay.toLowerCase() !== 'monday' && newDay.toLowerCase() !== 'tuesday' && newDay.toLowerCase() !== 'wednesday' && newDay.toLowerCase() !== 'thursday' && newDay.toLowerCase() !== 'friday' && newDay.toLowerCase() !== 'saturday' && newDay.toLowerCase() !== 'sunday') {
       alert('Please enter a valid day');
@@ -75,6 +70,10 @@ export const EditableTable = (props: EditableTableProps) => {
     setNewSubject('');
     setNewLeader('');
   }
+  const validators = {
+    "day": validateDay,
+    "time": validateTime
+  }
   return (
     <div>
       <table className='table text-white table-dark'>
@@ -105,9 +104,9 @@ export const EditableTable = (props: EditableTableProps) => {
               <TableInput text={group.chair} objectNumber={index} setJsonToExport={setJsonToExport}
                           jsonToExport={jsonToExport} fieldName={'chair'} />
               <TableInput text={group.day} objectNumber={index} setJsonToExport={setJsonToExport}
-                          jsonToExport={jsonToExport} fieldName={'day'} />
+                          jsonToExport={jsonToExport} fieldName={'day'} validators={validators}/>
               <TableInput text={group.time} objectNumber={index} setJsonToExport={setJsonToExport}
-                          jsonToExport={jsonToExport} fieldName={'time'} />
+                          jsonToExport={jsonToExport} fieldName={'time'} validators={validators}/>
               <TableInput text={group.headman} objectNumber={index} setJsonToExport={setJsonToExport}
                           jsonToExport={jsonToExport} fieldName={'headman'} />
               <TableInput text={group.course} objectNumber={index} setJsonToExport={setJsonToExport}
